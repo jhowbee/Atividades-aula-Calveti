@@ -1,0 +1,34 @@
+public class TesteCrypto {
+
+    public static void main(String[] args) {
+        // Exemplo de texto para criptografia
+        String textoClaro = "Texto a ser criptografado";
+
+        // Testando o CryptoDummy
+        System.out.println("==== Testando CryptoDummy ====");
+        CryptoDummy cryptoDummy = new CryptoDummy();
+        String textoCifradoDummy = cryptoDummy.cifrar(textoClaro);
+        String textoDecifradoDummy = cryptoDummy.decifrar(textoCifradoDummy);
+        Impressora.imprimirTextoClaro(textoClaro);
+        Impressora.imprimirTextoCifrado(textoCifradoDummy);
+        Impressora.imprimirTextoDecifrado(textoDecifradoDummy);
+
+        // Testando o CryptoAES
+        System.out.println("\n==== Testando CryptoAES ====");
+        CryptoAES cryptoAES = new CryptoAES();
+        String textoCifradoAES = cryptoAES.cifrar(textoClaro);
+        String textoDecifradoAES = cryptoAES.decifrar(textoCifradoAES);
+        Impressora.imprimirTextoClaro(textoClaro);
+        Impressora.imprimirTextoCifrado(textoCifradoAES);
+        Impressora.imprimirTextoDecifrado(textoDecifradoAES);
+
+        // Testando o CryptoRSA
+        System.out.println("\n==== Testando CryptoRSA ====");
+        CryptoRSA cryptoRSA = new CryptoRSA();
+        String textoCifradoRSA = cryptoRSA.cifrar(textoClaro);
+        String textoDecifradoRSA = cryptoRSA.decifrar(textoCifradoRSA);
+        Impressora.imprimirTextoClaro(textoClaro);
+        Impressora.imprimirTextoCifrado(textoCifradoRSA);
+        Impressora.imprimirTextoDecifrado(textoDecifradoRSA);
+    }
+}
