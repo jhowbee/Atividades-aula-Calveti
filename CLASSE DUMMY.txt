@@ -1,0 +1,112 @@
+resolução sobre os equipamentos queimados:
+Candence
+Sanduicheira San 400 - Valor de R$149,99
+Será necessário levar o item até a autorizada com a nota fiscal para que seja feita a troca da peça.
+LUX ELETRICA
+LUX ELETRICA LTDA
+AV DR GUILHERME D VILARES, 1141 - VILA SUZANA
+SAO PAULO - SP - 11-3742-3347
+Observação:
+Horário de atendimento: De segunda-feira à sexta-feira das 08:00h às 18:00 e sábado das 08:00h às 12:00
+
+___________________________________________________________________
+
+Eletrolux
+
+Sanduicheira inox  eletrolux - Valor de R$179,99
+Será necessário levar o item até a autorizada com a nota fiscal para que seja feita a troca da peça.
+
+Rua Professor Serafim Orlandi, 146, - Jardim Vila Mariana Bairro Jardim Vila Mariana, São Paulo/SP, CEP: 04115-090
+Ver no mapa
+08007778677
+(11)3004-8677
+Visitar site da assistência
+top.elux@electrolux.com.br
+
+__________________________________________________________________
+
+Arno
+
+Mixer turbo mix duo hx2
+ valor de R$159,99
+Será necessário levar o item até a autorizada com a nota fiscal para que seja feita a troca da peça.
+
+
+LUX ELETRICA LTDA ME
+AV. DR G. D. VILLARES, 1141 - MORUMBI - SAO PAULO - SP
+
+(11) 3742-3347
+
+LUX@LUXELETRICA.COM.BR
+
+_____________________________________________________________
+
+
+
+
+import java.util.Random;
+import java.io.*;
+
+public class CryptoDummy {
+    private static final String CHAVE_FILE = "chave.dummy";
+    private int chave;
+
+    public CryptoDummy() {
+        // Gera uma chave randômica e salva no arquivo
+        Random random = new Random();
+        this.chave = random.nextInt(100); // Número randômico simples, apenas para fins de exemplo
+        salvarChave(this.chave);
+    }
+
+    private void salvarChave(int chave) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CHAVE_FILE))) {
+            writer.write(Integer.toString(chave));
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar a chave: " + e.getMessage());
+        }
+    }
+
+    private int lerChave() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(CHAVE_FILE))) {
+            return Integer.parseInt(reader.readLine());
+        } catch (IOException e) {
+            System.out.println("Erro ao ler a chave: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    public String cifrar(String textoClaro) {
+        StringBuilder textoCifrado = new StringBuilder();
+        int chave = lerChave();
+        for (char c : textoClaro.toCharArray()) {
+            textoCifrado.append((char) (c + chave));
+        }
+        return textoCifrado.toString();
+    }
+
+    public String decifrar(String textoCifrado) {
+        StringBuilder textoDecifrado = new StringBuilder();
+        int chave = lerChave();
+        for (char c : textoCifrado.toCharArray()) {
+            textoDecifrado.append((char) (c - chave));
+        }
+        return textoDecifrado.toString();
+    }
+
+    public static void main(String[] args) {
+        CryptoDummy crypto = new CryptoDummy();
+
+        String textoClaro = "Texto para cifrar";
+        System.out.println("Texto Claro: " + textoClaro);
+
+        String textoCifrado = crypto.cifrar(textoClaro);
+        System.out.println("Texto Cifrado: " + textoCifrado);
+
+        String textoDecifrado = crypto.decifrar(textoCifrado);
+        System.out.println("Texto Decifrado: " + textoDecifrado);
+    }
+}
+
+
+
+
