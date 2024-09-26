@@ -1,0 +1,29 @@
+public class Impressora {
+
+    // Método para imprimir o texto claro
+    public static void imprimirTextoClaro(String textoClaro) {
+        System.out.println("Texto Claro: " + textoClaro);
+    }
+
+    // Método para imprimir o texto cifrado
+    public static void imprimirTextoCifrado(String textoCifrado) {
+        System.out.println("Texto Cifrado: " + textoCifrado);
+    }
+
+    // Método para imprimir o texto decifrado
+    public static void imprimirTextoDecifrado(String textoDecifrado) {
+        System.out.println("Texto Decifrado: " + textoDecifrado);
+    }
+
+    public static void main(String[] args) {
+        // Exemplos de uso
+        String textoClaro = "Este é um exemplo de texto claro.";
+        String textoCifrado = "Exemplo de texto cifrado.";
+        String textoDecifrado = "Este é o texto decifrado.";
+
+        // Impressão dos textos
+        imprimirTextoClaro(textoClaro);
+        imprimirTextoCifrado(textoCifrado);
+        imprimirTextoDecifrado(textoDecifrado);
+    }
+}
