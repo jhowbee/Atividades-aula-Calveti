@@ -1,0 +1,101 @@
+import java.io.*;
+import java.security.*;
+import java.security.spec.*;
+import javax.crypto.Cipher;
+import java.util.Base64;
+
+public class CryptoRSA {
+    private static final String PUBLIC_KEY_FILE = "chave.publica";
+    private static final String PRIVATE_KEY_FILE = "chave.privada";
+    private PrivateKey chavePrivada;
+    private PublicKey chavePublica;
+
+    public CryptoRSA() {
+        try {
+            // Gera um par de chaves e salva nos arquivos
+            gerarChaves();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao gerar as chaves RSA: " + e.getMessage(), e);
+        }
+    }
+
+    private void gerarChaves() throws Exception {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048); // Chave de 2048 bits
+        KeyPair parDeChaves = keyGen.generateKeyPair();
+        this.chavePrivada = parDeChaves.getPrivate();
+        this.chavePublica = parDeChaves.getPublic();
+
+        // Salvar as chaves em arquivos
+        salvarChave(this.chavePublica, PUBLIC_KEY_FILE);
+        salvarChave(this.chavePrivada, PRIVATE_KEY_FILE);
+    }
+
+    private void salvarChave(Key chave, String arquivo) throws IOException {
+        byte[] chaveBytes = chave.getEncoded();
+        String chaveBase64 = Base64.getEncoder().encodeToString(chaveBytes);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
+            writer.write(chaveBase64);
+        }
+    }
+
+    private PublicKey lerChavePublica() throws Exception {
+        String chaveBase64 = lerChaveDeArquivo(PUBLIC_KEY_FILE);
+        byte[] chaveBytes = Base64.getDecoder().decode(chaveBase64);
+
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        X509EncodedKeySpec chaveSpec = new X509EncodedKeySpec(chaveBytes);
+        return keyFactory.generatePublic(chaveSpec);
+    }
+
+    private PrivateKey lerChavePrivada() throws Exception {
+        String chaveBase64 = lerChaveDeArquivo(PRIVATE_KEY_FILE);
+        byte[] chaveBytes = Base64.getDecoder().decode(chaveBase64);
+
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PKCS8EncodedKeySpec chaveSpec = new PKCS8EncodedKeySpec(chaveBytes);
+        return keyFactory.generatePrivate(chaveSpec);
+    }
+
+    private String lerChaveDeArquivo(String arquivo) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
+            return reader.readLine();
+        }
+    }
+
+    public String cifrar(String textoClaro) {
+        try {
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, lerChavePublica());
+            byte[] textoCifrado = cipher.doFinal(textoClaro.getBytes());
+            return Base64.getEncoder().encodeToString(textoCifrado);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao cifrar: " + e.getMessage(), e);
+        }
+    }
+
+    public String decifrar(String textoCifrado) {
+        try {
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.DECRYPT_MODE, lerChavePrivada());
+            byte[] textoDecifrado = cipher.doFinal(Base64.getDecoder().decode(textoCifrado));
+            return new String(textoDecifrado);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao decifrar: " + e.getMessage(), e);
+        }
+    }
+
+    public static void main(String[] args) {
+        CryptoRSA crypto = new CryptoRSA();
+
+        String textoClaro = "Texto para cifrar com RSA";
+        System.out.println("Texto Claro: " + textoClaro);
+
+        String textoCifrado = crypto.cifrar(textoClaro);
+        System.out.println("Texto Cifrado: " + textoCifrado);
+
+        String textoDecifrado = crypto.decifrar(textoCifrado);
+        System.out.println("Texto Decifrado: " + textoDecifrado);
+    }
+}
