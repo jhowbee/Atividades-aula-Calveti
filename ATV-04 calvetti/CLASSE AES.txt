@@ -1,0 +1,82 @@
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.*;
+import java.util.Base64;
+
+public class CryptoAES {
+    private static final String CHAVE_FILE = "chave.simetrica";
+    private SecretKey chave;
+
+    public CryptoAES() {
+        // Gera uma chave AES e salva no arquivo
+        this.chave = gerarChave();
+        salvarChave(this.chave);
+    }
+
+    private SecretKey gerarChave() {
+        try {
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(128); // Chave de 128 bits
+            return keyGen.generateKey();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao gerar chave AES: " + e.getMessage(), e);
+        }
+    }
+
+    private void salvarChave(SecretKey chave) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CHAVE_FILE))) {
+            String chaveBase64 = Base64.getEncoder().encodeToString(chave.getEncoded());
+            writer.write(chaveBase64);
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar a chave: " + e.getMessage());
+        }
+    }
+
+    private SecretKey lerChave() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(CHAVE_FILE))) {
+            String chaveBase64 = reader.readLine();
+            byte[] chaveBytes = Base64.getDecoder().decode(chaveBase64);
+            return new SecretKeySpec(chaveBytes, "AES");
+        } catch (IOException e) {
+            System.out.println("Erro ao ler a chave: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public String cifrar(String textoClaro) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, lerChave());
+            byte[] textoCifrado = cipher.doFinal(textoClaro.getBytes());
+            return Base64.getEncoder().encodeToString(textoCifrado);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao cifrar: " + e.getMessage(), e);
+        }
+    }
+
+    public String decifrar(String textoCifrado) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, lerChave());
+            byte[] textoDecifrado = cipher.doFinal(Base64.getDecoder().decode(textoCifrado));
+            return new String(textoDecifrado);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao decifrar: " + e.getMessage(), e);
+        }
+    }
+
+    public static void main(String[] args) {
+        CryptoAES crypto = new CryptoAES();
+
+        String textoClaro = "Texto para cifrar com AES";
+        System.out.println("Texto Claro: " + textoClaro);
+
+        String textoCifrado = crypto.cifrar(textoClaro);
+        System.out.println("Texto Cifrado: " + textoCifrado);
+
+        String textoDecifrado = crypto.decifrar(textoCifrado);
+        System.out.println("Texto Decifrado: " + textoDecifrado);
+    }
+}
